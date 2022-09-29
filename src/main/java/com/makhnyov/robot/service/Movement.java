@@ -2,35 +2,37 @@ package com.makhnyov.robot.service;
 
 import org.springframework.stereotype.Service;
 
-import com.makhnyov.robot.model.Direction;
-import com.makhnyov.robot.model.Point;
-import com.makhnyov.robot.model.Position;
+import com.makhnyov.robot.entity.Direction;
+import com.makhnyov.robot.entity.Position;
 
 @Service
 public class Movement {
 
     private static final String LEFT = "L";
     private static final String RIGHT = "R";
+    private final Position startPosition;
 
-    private final Position startPosition = new Position(new Point(0L, 0L), Direction.NORTH);
+    public Movement() {
+        startPosition = new Position(0L, 0L, Direction.NORTH);
+    }
 
     // изменение координат робота при различных направлениях
     public Position move(Position position) {
         switch (position.getDirection()) {
             case NORTH:
-                position.getPoint().setY(position.getPoint().getY() + 1);
+                position.setY(position.getY() + 1);
                 return position;
             case SOUTH:
-                position.getPoint().setY(position.getPoint().getY() - 1);
+                position.setY(position.getY() - 1);
                 return position;
             case EAST:
-                position.getPoint().setX(position.getPoint().getX() + 1);
+                position.setX(position.getX() + 1);
                 return position;
             case WEST:
-                position.getPoint().setX(position.getPoint().getX() - 1);
+                position.setX(position.getX() - 1);
                 return position;
             default:
-                return startPosition;
+                return position;
         }
     }
 
@@ -52,7 +54,7 @@ public class Movement {
                         position.setDirection(Direction.SOUTH);
                         return position;
                     default:
-                        return startPosition;
+                        return position;
                 }
             case RIGHT:
                 switch (position.getDirection()) {
@@ -69,17 +71,17 @@ public class Movement {
                         position.setDirection(Direction.NORTH);
                         return position;
                     default:
-                        return startPosition;
+                        return position;
                 }
             default:
-                return startPosition;
+                return position;
         }
     }
 
     // определение замкнутости траектории
-    public Boolean isCircular(Position position) {
-        if (position.getPoint().getX() == startPosition.getPoint().getX()
-                && position.getPoint().getY() == startPosition.getPoint().getY())
+    public Boolean isCircular(Position position, String command) {
+        if (position.getX() == startPosition.getX()
+                && position.getY() == startPosition.getY() || command.equals("L") || command.equals("R"))
             return true;
         else
             return false;
