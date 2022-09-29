@@ -5,9 +5,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class Position {
-    
-    private Point point;
-    private Direction direction;
+public class Point {
 
+    private Long x;
+    private Long y;
 }
