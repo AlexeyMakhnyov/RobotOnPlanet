@@ -1,29 +1,29 @@
 package com.makhnyov.robot.service;
 
-import javax.annotation.PostConstruct;
-
+import com.makhnyov.robot.model.Direction;
+import com.makhnyov.robot.model.Point;
+import com.makhnyov.robot.model.Position;
+import com.makhnyov.robot.repository.PositionRepository;
+import com.makhnyov.robot.repository.RouteRepository;
 import org.springframework.stereotype.Service;
 
-import com.makhnyov.robot.entity.Points;
-import com.makhnyov.robot.entity.Position;
-import com.makhnyov.robot.entity.Direction;
-import com.makhnyov.robot.repository.PointRepository;
-import com.makhnyov.robot.repository.PositionRepository;
+import javax.annotation.PostConstruct;
+
 
 @Service
 public class DataLoad {
 
-    private final PointRepository pointRepository;
+    private final RouteRepository routeRepository;
     private final PositionRepository positionRepository;
 
-    public DataLoad(PointRepository pointRepository, PositionRepository positionRepository) {
-        this.pointRepository = pointRepository;
+    public DataLoad(RouteRepository routeRepository, PositionRepository positionRepository) {
+        this.routeRepository = routeRepository;
         this.positionRepository = positionRepository;
     }
 
     @PostConstruct
     public void loadData() {
-        pointRepository.save(new Points(0L, 0L));
+        routeRepository.save(new Point(0L, 0L));
         positionRepository.save(new Position(0L, 0L, Direction.NORTH));
     }
 

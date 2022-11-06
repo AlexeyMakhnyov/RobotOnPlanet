@@ -1,15 +1,16 @@
 package com.makhnyov.robot.service;
 
+import com.makhnyov.robot.model.Command;
+import com.makhnyov.robot.model.Position;
 import org.springframework.stereotype.Service;
 
-import com.makhnyov.robot.entity.Direction;
-import com.makhnyov.robot.entity.Position;
+import com.makhnyov.robot.model.Direction;
+
+import java.security.InvalidParameterException;
+import java.util.Objects;
 
 @Service
 public class Movement {
-
-    private static final String LEFT = "L";
-    private static final String RIGHT = "R";
     private final Position startPosition;
 
     public Movement() {
@@ -19,26 +20,29 @@ public class Movement {
     // изменение координат робота при различных направлениях
     public Position move(Position position) {
         switch (position.getDirection()) {
-            case NORTH:
+            case NORTH -> {
                 position.setY(position.getY() + 1);
                 return position;
-            case SOUTH:
+            }
+            case SOUTH -> {
                 position.setY(position.getY() - 1);
                 return position;
-            case EAST:
+            }
+            case EAST -> {
                 position.setX(position.getX() + 1);
                 return position;
-            case WEST:
+            }
+            case WEST -> {
                 position.setX(position.getX() - 1);
                 return position;
-            default:
-                return position;
+            }
+            default -> throw new InvalidParameterException("Wrong direction!");
         }
     }
 
     // изменение направления робота в различных ситуациях при повороте влево/вправо
-    public Position turn(Position position, String side) {
-        switch (side) {
+    public Position turn(Position position, Command command) {
+        switch (command) {
             case LEFT:
                 switch (position.getDirection()) {
                     case NORTH:
@@ -74,16 +78,13 @@ public class Movement {
                         return position;
                 }
             default:
-                return position;
+                throw new InvalidParameterException("Invalid command! Possible options L (left) or R (right)!");
         }
     }
 
     // определение замкнутости траектории
-    public Boolean isCircular(Position position, String command) {
-        if (position.getX() == startPosition.getX()
-                && position.getY() == startPosition.getY() || command.equals("L") || command.equals("R"))
-            return true;
-        else
-            return false;
+    public Boolean isCircular(Position position, Command command) {
+        return Objects.equals(position.getX(), startPosition.getX())
+                && Objects.equals(position.getY(), startPosition.getY()) || command == Command.LEFT || command == Command.RIGHT;
     }
 }

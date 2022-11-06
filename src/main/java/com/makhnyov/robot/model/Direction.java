@@ -1,4 +1,4 @@
-package com.makhnyov.robot.entity;
+package com.makhnyov.robot.model;
 
 public enum Direction {
     NORTH, SOUTH, EAST, WEST;

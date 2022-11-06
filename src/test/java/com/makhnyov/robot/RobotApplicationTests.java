@@ -2,12 +2,13 @@ package com.makhnyov.robot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.makhnyov.robot.model.Command;
+import com.makhnyov.robot.model.Position;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
-import com.makhnyov.robot.entity.Direction;
-import com.makhnyov.robot.entity.Position;
+import com.makhnyov.robot.model.Direction;
 import com.makhnyov.robot.service.Movement;
 
 @SpringBootTest
@@ -24,8 +25,9 @@ class RobotApplicationTests {
 		this.movement = movement;
 	}
 
-	@Test
+
 	// проверка изменения координат робота при передвижении в различных направлениях
+	@Test
 	void move() {
 		Position positionN = new Position(0L, 0L, Direction.NORTH);
 		Position expectedN = new Position(0L, 1L, Direction.NORTH);
@@ -47,9 +49,10 @@ class RobotApplicationTests {
 		assertEquals(expectedE, positionE);
 	}
 
-	@Test
+
 	// проверка изменения направления робота в различных ситуациях при повороте
 	// влево/вправо
+	@Test
 	void turn() {
 
 		Position northTurnLeft = new Position(0L, 0L, Direction.NORTH);
@@ -72,17 +75,17 @@ class RobotApplicationTests {
 		Position eastTurnRight = new Position(0L, 0L, Direction.EAST);
 		Position expectedEastTurnRight = new Position(0L, 0L, Direction.SOUTH);
 
-		northTurnLeft = movement.turn(northTurnLeft, "L");
-		northTurnRight = movement.turn(northTurnRight, "R");
+		northTurnLeft = movement.turn(northTurnLeft, Command.LEFT);
+		northTurnRight = movement.turn(northTurnRight, Command.RIGHT);
 
-		southTurnLeft = movement.turn(southTurnLeft, "L");
-		southTurnRight = movement.turn(southTurnRight, "R");
+		southTurnLeft = movement.turn(southTurnLeft, Command.LEFT);
+		southTurnRight = movement.turn(southTurnRight, Command.RIGHT);
 
-		westTurnLeft = movement.turn(westTurnLeft, "L");
-		westTurnRight = movement.turn(westTurnRight, "R");
+		westTurnLeft = movement.turn(westTurnLeft, Command.LEFT);
+		westTurnRight = movement.turn(westTurnRight, Command.RIGHT);
 
-		eastTurnLeft = movement.turn(eastTurnLeft, "L");
-		eastTurnRight = movement.turn(eastTurnRight, "R");
+		eastTurnLeft = movement.turn(eastTurnLeft, Command.LEFT);
+		eastTurnRight = movement.turn(eastTurnRight, Command.RIGHT);
 
 		assertEquals(expectedNorthTurnLeft, northTurnLeft);
 		assertEquals(expectedNorthTurnRight, northTurnRight);
@@ -97,25 +100,25 @@ class RobotApplicationTests {
 		assertEquals(expectedEastTurnRight, eastTurnRight);
 	}
 
-	@Test
+
 	// проверка цикличной траектории при ситуации, когда робот двигается и не
 	// двигается
+	@Test
 	void circularPosition() {
 		Position position = new Position(0L, 0L, Direction.NORTH);
-		Position turnDirection = new Position(0L, 0L, Direction.NORTH);
 
 		position = movement.move(position);
 		position = movement.move(position);
-		position = movement.turn(position, "L");
-		position = movement.turn(position, "L");
+		position = movement.turn(position, Command.LEFT);
+		position = movement.turn(position, Command.LEFT);
 		position = movement.move(position);
 		position = movement.move(position);
 
-		turnDirection = movement.turn(position, "L");
+		Position turnDirection = movement.turn(position, Command.LEFT);
 
-		assertEquals(true, movement.isCircular(position, "G"));
+		assertEquals(true, movement.isCircular(position, Command.GO));
 
-		assertEquals(true, movement.isCircular(turnDirection, "L"));
+		assertEquals(true, movement.isCircular(turnDirection, Command.LEFT));
 	}
 
 	@Test
@@ -127,7 +130,9 @@ class RobotApplicationTests {
 		position = movement.move(position);
 		position = movement.move(position);
 
-		assertEquals(false, movement.isCircular(position, "G"));
+		assertEquals(false, movement.isCircular(position, Command.GO));
 	}
+
+
 
 }

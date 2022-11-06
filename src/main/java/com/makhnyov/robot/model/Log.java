@@ -1,10 +1,9 @@
-package com.makhnyov.robot.entity;
+package com.makhnyov.robot.model;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.Table;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -12,18 +11,16 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-@Table(name = "route")
-public class Points {
+public class Log {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Long x;
-    private Long y;
+    private Command command;
 
-    public Points(Long x, Long y) {
-        this.x = x;
-        this.y = y;
+    public Log(Command command) {
+        this.command = command;
     }
+
 }
