@@ -2,8 +2,10 @@ package com.makhnyov.robot;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import com.makhnyov.robot.controller.RobotController;
 import com.makhnyov.robot.model.Command;
 import com.makhnyov.robot.model.Position;
+import com.makhnyov.robot.model.Route;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -15,16 +17,17 @@ import com.makhnyov.robot.service.Movement;
 class RobotApplicationTests {
 
 	private final Movement movement;
+	private final RobotController robotController;
 
 	@Test
 	void contextLoads() {
 	}
 
 	@Autowired
-	public RobotApplicationTests(Movement movement) {
+	public RobotApplicationTests(Movement movement, RobotController robotController) {
 		this.movement = movement;
+		this.robotController = robotController;
 	}
-
 
 	// проверка изменения координат робота при передвижении в различных направлениях
 	@Test
@@ -49,12 +52,10 @@ class RobotApplicationTests {
 		assertEquals(expectedE, positionE);
 	}
 
-
 	// проверка изменения направления робота в различных ситуациях при повороте
 	// влево/вправо
 	@Test
 	void turn() {
-
 		Position northTurnLeft = new Position(0L, 0L, Direction.NORTH);
 		Position expectedNorthTurnLeft = new Position(0L, 0L, Direction.WEST);
 		Position northTurnRight = new Position(0L, 0L, Direction.NORTH);
@@ -100,7 +101,6 @@ class RobotApplicationTests {
 		assertEquals(expectedEastTurnRight, eastTurnRight);
 	}
 
-
 	// проверка цикличной траектории при ситуации, когда робот двигается и не
 	// двигается
 	@Test
@@ -121,8 +121,8 @@ class RobotApplicationTests {
 		assertEquals(true, movement.isCircular(turnDirection, Command.LEFT));
 	}
 
-	@Test
 	// проверка нецикличной траектории
+	@Test
 	void nonCircularPosition() {
 		Movement movement = new Movement();
 		Position position = new Position(0L, 0L, Direction.NORTH);
@@ -133,6 +133,21 @@ class RobotApplicationTests {
 		assertEquals(false, movement.isCircular(position, Command.GO));
 	}
 
+	// проверка rest api
+	@Test
+	void restApiTest() {
+		Position endPosition = new Position(1L, 2L, Direction.EAST);
 
+		robotController.executeCommand("G");
+		robotController.executeCommand("G");
+		robotController.executeCommand("R");
+		robotController.executeCommand("G");
+
+		Position currentPosition = robotController.getCurrentPosition();
+		Route route = robotController.getRoute();
+
+		assertEquals(endPosition, currentPosition);
+		assertEquals(false, route.circular());
+	}
 
 }
