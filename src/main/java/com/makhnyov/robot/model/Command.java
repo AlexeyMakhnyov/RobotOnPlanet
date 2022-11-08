@@ -4,7 +4,7 @@ import lombok.Getter;
 
 @Getter
 public enum Command {
-    GO("G"), LEFT("L"), RIGHT("R");
+    GO("G"), LEFT("L"), RIGHT("R"), ERROR("ERROR");
 
     private final String command;
 
@@ -18,7 +18,7 @@ public enum Command {
                 return c;
             }
         }
-        return null;
+        return ERROR;
     }
 
 

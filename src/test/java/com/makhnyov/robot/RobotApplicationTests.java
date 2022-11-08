@@ -12,6 +12,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.makhnyov.robot.model.Direction;
 import com.makhnyov.robot.service.Movement;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 @SpringBootTest
 class RobotApplicationTests {
@@ -137,6 +139,7 @@ class RobotApplicationTests {
 	@Test
 	void restApiTest() {
 		Position endPosition = new Position(1L, 2L, Direction.EAST);
+		ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Invalid command! Possible options L (left) or R (right) or G (go)!", HttpStatus.BAD_REQUEST);
 
 		robotController.executeCommand("G");
 		robotController.executeCommand("G");
@@ -146,8 +149,11 @@ class RobotApplicationTests {
 		Position currentPosition = robotController.getCurrentPosition();
 		Route route = robotController.getRoute();
 
+		ResponseEntity<String> actualResponseEntity = robotController.executeCommand("T");
+
 		assertEquals(endPosition, currentPosition);
 		assertEquals(false, route.circular());
+		assertEquals(expectedResponseEntity, actualResponseEntity);
 	}
 
 }

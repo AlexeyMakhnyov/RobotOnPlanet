@@ -54,7 +54,7 @@ public class RobotController {
     public ResponseEntity<String> executeCommand(@PathVariable String command) {
         Position position = positionRepository.findFirstByOrderByIdDesc();
         Command cmd = Command.fromString(command);
-        switch (Objects.requireNonNull(cmd)) {
+        switch (cmd) {
             case GO, LEFT, RIGHT ->
                     executeCommand(cmd, position);
             default -> {
