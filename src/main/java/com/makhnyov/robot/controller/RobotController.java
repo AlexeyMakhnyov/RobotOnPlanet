@@ -1,7 +1,5 @@
 package com.makhnyov.robot.controller;
 
-import java.util.Objects;
-
 import com.makhnyov.robot.model.*;
 import com.makhnyov.robot.repository.LogRepository;
 import com.makhnyov.robot.repository.PositionRepository;
