@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Data
 @NoArgsConstructor
-public class Log {
+public class CommandLog {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,7 +19,7 @@ public class Log {
 
     private Command command;
 
-    public Log(Command command) {
+    public CommandLog(Command command) {
         this.command = command;
     }
 

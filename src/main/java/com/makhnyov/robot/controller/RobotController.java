@@ -1,60 +1,44 @@
 package com.makhnyov.robot.controller;
 
+import com.makhnyov.robot.dto.PositionDto;
 import com.makhnyov.robot.model.*;
-import com.makhnyov.robot.repository.LogRepository;
-import com.makhnyov.robot.repository.PositionRepository;
-import com.makhnyov.robot.repository.RouteRepository;
+import com.makhnyov.robot.service.CommandService;
+import com.makhnyov.robot.service.PositionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.makhnyov.robot.service.Movement;
+import java.util.List;
 
 @RestController
 @RequestMapping("/robot")
 public class RobotController {
+    private final PositionService positionService;
+    private final CommandService commandService;
 
-    private final Movement movement;
-    private final PositionRepository positionRepository;
-    private final RouteRepository routeRepository;
-    private final LogRepository logRepository;
-
-    public RobotController(Movement movement, PositionRepository positionRepository, RouteRepository routeRepository, LogRepository logRepository) {
-        this.movement = movement;
-        this.positionRepository = positionRepository;
-        this.routeRepository = routeRepository;
-        this.logRepository = logRepository;
+    @Autowired
+    public RobotController(PositionService positionService, CommandService commandService) {
+        this.positionService = positionService;
+        this.commandService = commandService;
     }
-
 
     @GetMapping("/position")
-    public Position getCurrentPosition() {
-        return positionRepository.findFirstByOrderByIdDesc();
+    public PositionDto getCurrentPosition() {
+        return positionService.getCurrentPosition();
     }
 
-    @PostMapping("/reset")
-    public void resetCurrentPosition() {
-        routeRepository.deleteAll();
-        routeRepository.save(new Point(0L, 0L));
-        Position position = positionRepository.findFirstByOrderByIdDesc();
-        position.setX(0L);
-        position.setY(0L);
-        position.setDirection(Direction.NORTH);
-        positionRepository.save(position);
-        logRepository.deleteAll();
+    @GetMapping("/reset")
+    public void reset() {
+        positionService.reset();
     }
 
     @PostMapping("/{command}")
     public ResponseEntity<String> executeCommand(@PathVariable String command) {
-        Position position = positionRepository.findFirstByOrderByIdDesc();
         Command cmd = Command.fromString(command);
         switch (cmd) {
             case GO, LEFT, RIGHT ->
-                    executeCommand(cmd, position);
+                    positionService.executeCommand(cmd);
             default -> {
                 return new ResponseEntity<>("Invalid command! Possible options L (left) or R (right) or G (go)!", HttpStatus.BAD_REQUEST);
             }
@@ -62,32 +46,14 @@ public class RobotController {
         return new ResponseEntity<>("The robot executed the command " + cmd.getCommand() + ".", HttpStatus.OK);
     }
 
-    private void executeCommand(Command command, Position position) {
-        if (command == Command.GO) {
-            position = movement.move(position);
-            positionRepository.save(position);
-            routeRepository.save(new Point(position.getX(), position.getY()));
-        } else {
-            position = movement.turn(position, command);
-        }
-        positionRepository.save(position);
-        logRepository.save(new Log(command));
-    }
-
     @GetMapping("/route")
     public Route getRoute() {
-        long count = logRepository.count();
-        if (count == 0)
-            return null;
-        else
-            return new Route(routeRepository.findAll(),
-                    movement.isCircular(positionRepository.findFirstByOrderByIdDesc(),
-                           logRepository.findFirstByOrderByIdDesc().getCommand()));
+       return positionService.getRoute();
     }
 
     @GetMapping("/commands")
-    public Iterable<Log> getCommands() {
-        return logRepository.findAll();
+    public List<Command> getCommands() {
+        return commandService.getCommands();
     }
 
 }

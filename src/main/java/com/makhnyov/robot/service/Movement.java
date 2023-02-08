@@ -1,7 +1,7 @@
 package com.makhnyov.robot.service;
 
+import com.makhnyov.robot.dto.PositionDto;
 import com.makhnyov.robot.model.Command;
-import com.makhnyov.robot.model.Position;
 import org.springframework.stereotype.Service;
 
 import com.makhnyov.robot.model.Direction;
@@ -11,14 +11,14 @@ import java.util.Objects;
 
 @Service
 public class Movement {
-    private final Position startPosition;
+    private final PositionDto startPosition;
 
     public Movement() {
-        startPosition = new Position(0L, 0L, Direction.NORTH);
+        startPosition = new PositionDto(0L, 0L, Direction.NORTH);
     }
 
     // изменение координат робота при различных направлениях
-    public Position move(Position position) {
+    public PositionDto move(PositionDto position) {
         switch (position.getDirection()) {
             case NORTH -> {
                 position.setY(position.getY() + 1);
@@ -41,50 +41,50 @@ public class Movement {
     }
 
     // изменение направления робота в различных ситуациях при повороте влево/вправо
-    public Position turn(Position position, Command command) {
+    public PositionDto turn(PositionDto positionDto, Command command) {
         switch (command) {
             case LEFT:
-                switch (position.getDirection()) {
+                switch (positionDto.getDirection()) {
                     case NORTH:
-                        position.setDirection(Direction.WEST);
-                        return position;
+                        positionDto.setDirection(Direction.WEST);
+                        return positionDto;
                     case SOUTH:
-                        position.setDirection(Direction.EAST);
-                        return position;
+                        positionDto.setDirection(Direction.EAST);
+                        return positionDto;
                     case EAST:
-                        position.setDirection(Direction.NORTH);
-                        return position;
+                        positionDto.setDirection(Direction.NORTH);
+                        return positionDto;
                     case WEST:
-                        position.setDirection(Direction.SOUTH);
-                        return position;
+                        positionDto.setDirection(Direction.SOUTH);
+                        return positionDto;
                     default:
-                        return position;
+                        return positionDto;
                 }
             case RIGHT:
-                switch (position.getDirection()) {
+                switch (positionDto.getDirection()) {
                     case NORTH:
-                        position.setDirection(Direction.EAST);
-                        return position;
+                        positionDto.setDirection(Direction.EAST);
+                        return positionDto;
                     case SOUTH:
-                        position.setDirection(Direction.WEST);
-                        return position;
+                        positionDto.setDirection(Direction.WEST);
+                        return positionDto;
                     case EAST:
-                        position.setDirection(Direction.SOUTH);
-                        return position;
+                        positionDto.setDirection(Direction.SOUTH);
+                        return positionDto;
                     case WEST:
-                        position.setDirection(Direction.NORTH);
-                        return position;
+                        positionDto.setDirection(Direction.NORTH);
+                        return positionDto;
                     default:
-                        return position;
+                        return positionDto;
                 }
             default:
                 throw new InvalidParameterException("Invalid command! Possible options L (left) or R (right)!");
         }
     }
 
-    // определение замкнутости траектории
-    public Boolean isCircular(Position position, Command command) {
-        return Objects.equals(position.getX(), startPosition.getX())
-                && Objects.equals(position.getY(), startPosition.getY()) || command == Command.LEFT || command == Command.RIGHT;
+//    // определение замкнутости траектории
+    public Boolean isCircular(PositionDto positionDto, Command command) {
+        return Objects.equals(positionDto.getX(), startPosition.getX())
+                && Objects.equals(positionDto.getY(), startPosition.getY()) || command == Command.LEFT || command == Command.RIGHT;
     }
 }

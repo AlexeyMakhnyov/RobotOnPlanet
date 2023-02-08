@@ -3,8 +3,8 @@ package com.makhnyov.robot;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.makhnyov.robot.controller.RobotController;
+import com.makhnyov.robot.dto.PositionDto;
 import com.makhnyov.robot.model.Command;
-import com.makhnyov.robot.model.Position;
 import com.makhnyov.robot.model.Route;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,14 +34,14 @@ class RobotApplicationTests {
 	// проверка изменения координат робота при передвижении в различных направлениях
 	@Test
 	void move() {
-		Position positionN = new Position(0L, 0L, Direction.NORTH);
-		Position expectedN = new Position(0L, 1L, Direction.NORTH);
-		Position positionS = new Position(0L, 0L, Direction.SOUTH);
-		Position expectedS = new Position(0L, -1L, Direction.SOUTH);
-		Position positionW = new Position(0L, 0L, Direction.WEST);
-		Position expectedW = new Position(-1L, 0L, Direction.WEST);
-		Position positionE = new Position(0L, 0L, Direction.EAST);
-		Position expectedE = new Position(1L, 0L, Direction.EAST);
+		com.makhnyov.robot.dto.PositionDto positionN = new com.makhnyov.robot.dto.PositionDto(0L, 0L, Direction.NORTH);
+		com.makhnyov.robot.dto.PositionDto expectedN = new com.makhnyov.robot.dto.PositionDto(0L, 1L, Direction.NORTH);
+		com.makhnyov.robot.dto.PositionDto positionS = new com.makhnyov.robot.dto.PositionDto(0L, 0L, Direction.SOUTH);
+		com.makhnyov.robot.dto.PositionDto expectedS = new com.makhnyov.robot.dto.PositionDto(0L, -1L, Direction.SOUTH);
+		com.makhnyov.robot.dto.PositionDto positionW = new com.makhnyov.robot.dto.PositionDto(0L, 0L, Direction.WEST);
+		com.makhnyov.robot.dto.PositionDto expectedW = new com.makhnyov.robot.dto.PositionDto(-1L, 0L, Direction.WEST);
+		com.makhnyov.robot.dto.PositionDto positionE = new com.makhnyov.robot.dto.PositionDto(0L, 0L, Direction.EAST);
+		com.makhnyov.robot.dto.PositionDto expectedE = new com.makhnyov.robot.dto.PositionDto(1L, 0L, Direction.EAST);
 
 		positionN = movement.move(positionN);
 		positionS = movement.move(positionS);
@@ -58,25 +58,25 @@ class RobotApplicationTests {
 	// влево/вправо
 	@Test
 	void turn() {
-		Position northTurnLeft = new Position(0L, 0L, Direction.NORTH);
-		Position expectedNorthTurnLeft = new Position(0L, 0L, Direction.WEST);
-		Position northTurnRight = new Position(0L, 0L, Direction.NORTH);
-		Position expectedNorthTurnRight = new Position(0L, 0L, Direction.EAST);
+		PositionDto northTurnLeft = new PositionDto(0L, 0L, Direction.NORTH);
+		PositionDto expectedNorthTurnLeft = new PositionDto(0L, 0L, Direction.WEST);
+		PositionDto northTurnRight = new PositionDto(0L, 0L, Direction.NORTH);
+		PositionDto expectedNorthTurnRight = new PositionDto(0L, 0L, Direction.EAST);
 
-		Position southTurnLeft = new Position(0L, 0L, Direction.SOUTH);
-		Position expectedSouthTurnLeft = new Position(0L, 0L, Direction.EAST);
-		Position southTurnRight = new Position(0L, 0L, Direction.SOUTH);
-		Position expectedSouthTurnRight = new Position(0L, 0L, Direction.WEST);
+		PositionDto southTurnLeft = new PositionDto(0L, 0L, Direction.SOUTH);
+		PositionDto expectedSouthTurnLeft = new PositionDto(0L, 0L, Direction.EAST);
+		PositionDto southTurnRight = new PositionDto(0L, 0L, Direction.SOUTH);
+		PositionDto expectedSouthTurnRight = new PositionDto(0L, 0L, Direction.WEST);
 
-		Position westTurnLeft = new Position(0L, 0L, Direction.WEST);
-		Position expectedWestTurnLeft = new Position(0L, 0L, Direction.SOUTH);
-		Position westTurnRight = new Position(0L, 0L, Direction.WEST);
-		Position expectedWestTurnRight = new Position(0L, 0L, Direction.NORTH);
+		PositionDto westTurnLeft = new PositionDto(0L, 0L, Direction.WEST);
+		PositionDto expectedWestTurnLeft = new PositionDto(0L, 0L, Direction.SOUTH);
+		PositionDto westTurnRight = new PositionDto(0L, 0L, Direction.WEST);
+		PositionDto expectedWestTurnRight = new PositionDto(0L, 0L, Direction.NORTH);
 
-		Position eastTurnLeft = new Position(0L, 0L, Direction.EAST);
-		Position expectedEastTurnLeft = new Position(0L, 0L, Direction.NORTH);
-		Position eastTurnRight = new Position(0L, 0L, Direction.EAST);
-		Position expectedEastTurnRight = new Position(0L, 0L, Direction.SOUTH);
+		PositionDto eastTurnLeft = new PositionDto(0L, 0L, Direction.EAST);
+		PositionDto expectedEastTurnLeft = new PositionDto(0L, 0L, Direction.NORTH);
+		PositionDto eastTurnRight = new PositionDto(0L, 0L, Direction.EAST);
+		PositionDto expectedEastTurnRight = new PositionDto(0L, 0L, Direction.SOUTH);
 
 		northTurnLeft = movement.turn(northTurnLeft, Command.LEFT);
 		northTurnRight = movement.turn(northTurnRight, Command.RIGHT);
@@ -107,7 +107,7 @@ class RobotApplicationTests {
 	// двигается
 	@Test
 	void circularPosition() {
-		Position position = new Position(0L, 0L, Direction.NORTH);
+		PositionDto position = new PositionDto(0L, 0L, Direction.NORTH);
 
 		position = movement.move(position);
 		position = movement.move(position);
@@ -116,7 +116,7 @@ class RobotApplicationTests {
 		position = movement.move(position);
 		position = movement.move(position);
 
-		Position turnDirection = movement.turn(position, Command.LEFT);
+		PositionDto turnDirection = movement.turn(position, Command.LEFT);
 
 		assertEquals(true, movement.isCircular(position, Command.GO));
 
@@ -127,7 +127,7 @@ class RobotApplicationTests {
 	@Test
 	void nonCircularPosition() {
 		Movement movement = new Movement();
-		Position position = new Position(0L, 0L, Direction.NORTH);
+		PositionDto position = new PositionDto(0L, 0L, Direction.NORTH);
 
 		position = movement.move(position);
 		position = movement.move(position);
@@ -138,7 +138,7 @@ class RobotApplicationTests {
 	// проверка rest api
 	@Test
 	void restApiTest() {
-		Position endPosition = new Position(1L, 2L, Direction.EAST);
+		PositionDto endPosition = new PositionDto(1L, 2L, Direction.EAST);
 		ResponseEntity<String> expectedResponseEntity = new ResponseEntity<>("Invalid command! Possible options L (left) or R (right) or G (go)!", HttpStatus.BAD_REQUEST);
 
 		robotController.executeCommand("G");
@@ -146,7 +146,7 @@ class RobotApplicationTests {
 		robotController.executeCommand("R");
 		robotController.executeCommand("G");
 
-		Position currentPosition = robotController.getCurrentPosition();
+		PositionDto currentPosition = robotController.getCurrentPosition();
 		Route route = robotController.getRoute();
 
 		ResponseEntity<String> actualResponseEntity = robotController.executeCommand("T");
